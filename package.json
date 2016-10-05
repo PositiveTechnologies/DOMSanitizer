@@ -1,0 +1,65 @@
+{
+  "name": "DOMSanitizer",
+  "description": "JavaScript client side WAF module for sanitizing",
+  "version": "0.1.0",
+  "homepage": "http://www.github.com/ptresearch/DOMSanitizer",
+  "author": {
+    "name": "Positive Technologies Application Firewall Research Team",
+    "email": "af@ptsecurity.com"
+  },
+  "license": "Apache-2.0",
+  "maintainers": [
+    {
+      "name": "Denis Kolegov",
+      "email": "dnkolegov@gmail.com"
+    },
+    {
+      "name": "Arseny Reutov",
+      "email": "me@raz0r.name"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ptresearch/DOMSanitizer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ptresearch/DOMSanitizer/issues"
+  },
+  "main": "dist/sanitizer.js",
+  "scripts": {
+    "lint": "eslint src/*.js test/**/*.js",
+    "build": "grunt build",
+    "test": "grunt test"
+  },
+  "pre-commit": [
+    "lint"
+  ],
+  "devDependencies": {
+    "eslint": "^3.9.0",
+    "grunt": "~0.4.5",
+    "grunt-casper": "^0.4.2",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-connect": "^0.11.2",
+    "grunt-eslint": "^18.1.0",
+    "grunt-html-build": "^0.5.2",
+    "grunt-jsvalidate": "^0.2.2",
+    "path": "^0.12.7",
+    "pre-commit": "^1.1.3"
+  },
+  "keywords": [
+    "waf",
+    "detection",
+    "xss",
+    "security",
+    "sanitizer",
+    "sanitize",
+    "filter",
+    "validation"
+  ],
+  "dependencies": {
+    "acorn": "3.3.0",
+    "dompurify": "0.8.7"
+  }
+}
