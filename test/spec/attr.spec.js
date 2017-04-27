@@ -183,7 +183,12 @@ var tests = [
 
 var sanitizer = function() {
     var dirty = location.hash.substring(1);
-    return DOMSanitizer.sanitize(dirty, {CONTEXTS: ['attr']});
+    var injection = DOMSanitizer.isInjection(dirty, {CONTEXTS: ['attr']});
+    if (injection) {
+        return '';
+    } else {
+        return dirty;
+    }
 };
 
 module.exports = {tests: tests, sanitizer: sanitizer};

@@ -179,7 +179,7 @@
      *  It supports html entities, octal, hex, and unicode decodings.
      *
      *  @param {string} s - input string.
-     *  @return {string} normalizad input.
+     *  @return {string} normalized input.
      */
     var _normalizeInput = function(s) {
         var tmp;
@@ -196,7 +196,7 @@
         return s;
     };
     
-    /* JavaScript tokenizer */
+    /* JavaScript tokenizer. */
     var _getJSTokens = function(s) {
         if (s === '') {
             return [''];
@@ -487,33 +487,81 @@
 
         return s;
     };
+
+    /*
+     *  InjectionContext
+     *
+     *  @param {string} input - original input string.
+     *  @param {string} normalizedInput - normalized input string.
+     *  @param {Array} contexts - contexts, where injection was detected.
+     */
+
+    function InjectionContext(input, normalizedInput, contexts) {
+        this.isInjection = true;
+        this.contexts = contexts;
+        this.input = input;
+        this.normalizedInput = normalizedInput;
+    }
     
     /*
-     *  sanitize
+     *  isInjection
      *
      *  @param {string} dirty     - input string.
      *  @param {object} options   - configuration object
      *
-     *  @return {string} If input is safe in the specified contexts, returns original s, else returns empty string.
+     *  @return {boolean} `true` if a dirty is injection.
      */
-    DOMSanitizer.sanitize = function(dirty, cfg) {
+    DOMSanitizer.isInjection = function(dirty, cfg) {
         if (dirty === '') {
-            return dirty;
+            return false;
         }
         if (typeof cfg !== 'object') {
             cfg = {};
         }
         _parseConfig(cfg);
-        var s = _normalizeInput(dirty);
-        var ctx, item;
+        var normalized = _normalizeInput(dirty);
+        var ctx, lctx;
         // eslint-disable-next-line guard-for-in
-        for (item in CONTEXTS) {
-            ctx = item.toLowerCase();
-            if (ctx in _sanitize && !_sanitize[ctx](s)) {
-                return CLEAN;
+        for (ctx in CONTEXTS) {
+            lctx = ctx.toLowerCase();
+            if (lctx in _sanitize && !_sanitize[lctx](normalized)) {
+                return true;
             }
         }
-        return dirty;
+        return false;
+    };
+
+    /*
+     *  getInjectionContext
+     *
+     *  @param {string} dirty - input string.
+     *  @param {object} options - configuration object
+     *
+     *  @return {InjectionContext|null} The `InjectionContext` object, or `null` if there is no injection.
+     */
+    DOMSanitizer.getInjectionContext = function(dirty, cfg) {
+        if (dirty === '') {
+            return null;
+        }
+        if (typeof cfg !== 'object') {
+            cfg = {};
+        }
+        _parseConfig(cfg);
+        var normalized = _normalizeInput(dirty);
+        var ctx, lctx;
+        var raisedContexts = [];
+        // eslint-disable-next-line guard-for-in
+        for (ctx in CONTEXTS) {
+            lctx = ctx.toLowerCase();
+            if (lctx in _sanitize && !_sanitize[lctx](normalized)) {
+                raisedContexts.push(lctx);
+            }
+        }
+        if (raisedContexts.length > 0) {
+            return new InjectionContext(dirty, normalized, raisedContexts);
+        } else {
+            return false;
+        }
     };
 
     /*
@@ -521,6 +569,7 @@
      *  It supports html entities, octal, hex, and unicode decodings.
      *
      *  @param {string} s - input string.
+     *
      *  @return {string} normalizad input.
      */
     DOMSanitizer.normalize = _normalizeInput;

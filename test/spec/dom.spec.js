@@ -124,7 +124,12 @@ var tests = [
 
 var sanitizer = function() {
     var dirty = location.hash.substring(1);
-    return DOMSanitizer.sanitize(dirty, {CONTEXTS: ['dom']});
+    var injection = DOMSanitizer.isInjection(dirty, {CONTEXTS: ['dom']});
+    if (injection) {
+        return '';
+    } else {
+        return dirty;
+    }
 };
 
 module.exports = {tests: tests, sanitizer: sanitizer};
