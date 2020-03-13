@@ -59,7 +59,7 @@
     "validation"
   ],
   "dependencies": {
-    "acorn": "3.3.0",
+    "acorn": "7.1.1",
     "dompurify": "0.8.7"
   }
 }
